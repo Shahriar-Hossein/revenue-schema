@@ -128,11 +128,11 @@ $schema = array(
                         'type'        => 'string',
                         'context'     => array( 'view', 'edit' ),
                     ),
-                    // 'image' => array(
-                    //     'description' => __( 'Section image URL', 'revenue' ),
-                    //     'type'        => 'string',
-                    //     'context'     => array( 'view', 'edit' ),
-                    // ),
+                    'image_id' => array(
+                        'description' => __( 'Section image ID', 'revenue' ),
+                        'type'        => 'number',
+                        'context'     => array( 'view', 'edit' ),
+                    ),
                     'products' => array(
                         'description' => __('List of Offered products (one entry per product) within this section', 'revenue'),
                         'type'        => 'array',
