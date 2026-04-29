@@ -56,13 +56,19 @@ $product_discount_schema = array(
     'required'   => array( 'product_id', 'quantity', 'discount_value', 'discount_type' ),
     'properties' => array(
         'product_id' => $base_product_schema['properties']['product_id'],
-        'title' => $base_product_schema['properties']['product_name'],
+        'product_name' => $base_product_schema['properties']['product_name'],
         'quantity'   => $base_product_schema['properties']['quantity'],
         'discount_value' => $offer_schema['properties']['discount_value'],
         'discount_type' => $offer_schema['properties']['discount_type'],
     ),
 );
 
+$animation_types = array(
+	'wobble' => __( 'Wobble', 'revenue' ),
+	'shake'  => __( 'Shake', 'revenue' ),
+	'zoom'   => __( 'Zoom', 'revenue' ),
+	'pulse'  => __( 'Pulse', 'revenue' ),
+);
 
 // starts with campaign. ( the main object )
 $bundle_schema = array(
@@ -357,7 +363,7 @@ $bundle_schema = array(
             'description' => __('Campaign animated add to cart animation type', 'revenue'),
             'type'        => 'string',
             'context'     => $context,
-            'enum'        => array_keys(revenue()->get_campaign_animated_add_to_cart_animation_types()),
+            'enum'        => array_keys($animation_types),
         ),
         'animation_loop_delay' => array(
             'description' => __('Delay between animation loops', 'revenue'),
