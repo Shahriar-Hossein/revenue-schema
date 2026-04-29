@@ -1,79 +1,190 @@
 <?php
+
+$offer_type_enum = array(
+    'percentage',
+    'fixed_unit_discount',
+    'fixed_total_discount',
+    'fixed_unit_price',
+    'fixed_total_price',
+    'no_discount',
+    'free',
+);
+$context = array( 'view', 'edit' );
+$base_product_schema = array(
+	'type'       => 'object',
+	'required'   => array( 'product_id', 'quantity' ),
+	'context'     => $context,
+	'properties' => array(
+		'product_id' => array(
+			'description' => __('Product ID.', 'revenue'),
+			'type'        => 'integer',
+			'context'     => $context,
+		),
+		'product_name' => array(
+			'description' => __('Editable product name.', 'revenue'),
+			'type'        => 'string',
+			'context'     => $context,
+		),
+		'quantity'   => array(
+			'description' => __('Product quantity.', 'revenue'),
+			'type'        => 'integer',
+			'context'     => $context,
+			'default'     => 1,
+			'minimum'     => 1,
+		),
+	),
+);
+
+$offer_schema = array(
+    'type'       => 'object',
+    'required'   => array( 'discount_value', 'discount_type' ),
+	'context'     => $context,
+    'properties' => array(
+        'discount_value' => array(
+            'description' => __('Offer value applied to all products', 'revenue'),
+            'type'        => 'number',
+            'context'     => $context,
+        ),
+        'discount_type' => array(
+            'description' => __('Offer type applied to all products', 'revenue'),
+            'type'        => 'string',
+            'enum'        => $offer_type_enum,
+            'context'     => $context,
+        ),
+    ),
+);
+$product_discount_schema = array(
+    'type'       => 'object',
+    'required'   => array( 'product_id', 'product_name', 'quantity', 'discount_value', 'discount_type' ),
+	'context'     => $context,
+    'properties' => array(
+        'product_id' => $base_product_schema['properties']['product_id'],
+        'product_name' => $base_product_schema['properties']['product_name'],
+        'quantity'   => $base_product_schema['properties']['quantity'],
+        'discount_value' => $offer_schema['properties']['discount_value'],
+        'discount_type' => $offer_schema['properties']['discount_type'],
+    ),
+);
+
+$animation_types = array(
+	'wobble' => __( 'Wobble', 'revenue' ),
+	'shake'  => __( 'Shake', 'revenue' ),
+	'zoom'   => __( 'Zoom', 'revenue' ),
+	'pulse'  => __( 'Pulse', 'revenue' ),
+);
 $schema = array(
 	'$schema'    => 'http://json-schema.org/draft-04/schema#',
 	'title'      => $this->post_type,
 	'type'       => 'object',
 	'properties' => array(
 		'id'                                   => array(
-			'description' => __( 'Unique identifier for campaign.', 'revenue' ),
-			'type'        => 'integer',
-			'context'     => array( 'view', 'edit' ),
-			'readonly'    => true,
-		),
+            'description' => __('Unique identifier for campaign.', 'revenue'),
+            'type'        => 'integer',
+            'context'     => $context,
+            'readonly'    => true,
+        ),
 
-		'name'                        => array(
-			'description' => __( 'Campaign name.', 'revenue' ),
-			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
-		),
+        'name'                        => array(
+            'description' => __('Campaign name.', 'revenue'),
+            'type'        => 'string',
+            'context'     => $context,
+        ),
 
-		'type'                        => array(
-			'description' => __( 'campaign type.', 'revenue' ),
-			'type'        => 'string',
-			'default'     => 'bundle',
-			'context'     => array( 'view', 'edit' ),
-		),
+        'type'                        => array(
+            'description' => __('campaign type.', 'revenue'),
+            'type'        => 'string',
+            'default'     => 'bundle',
+            'context'     => $context,
+        ),
 
-		'status'                      => array(
-			'description' => __( 'campaign status', 'revenue' ),
-			'type'        => 'string',
-			'default'     => 'draft',
-			'enum'        => array( 'draft', 'published' ),
-			'context'     => array( 'view', 'edit' ),
-		),
+        'status'                      => array(
+            'description' => __('campaign status', 'revenue'),
+            'type'        => 'string',
+            'default'     => 'draft',
+            'enum'        => array( 'draft', 'published' ),
+            'context'     => $context,
+        ),
 
-		'created_at_gmt'                     => array(
-			'description' => __( 'The date the campaign was created, as GMT.', 'revenue' ),
-			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
-			'readonly'    => true,
-		),
+        'target_page' => array(
+            'description' => __('Where the campaign will be displayed', 'revenue'),
+            'type'        => 'string',
+            'enum'        => array(
+                'product',
+                'cart',
+                'checkout',
+                'thank_you',
+                'my_account',
+                'shop',
+                'home',
+                'custom',
+            ),
+            'context'     => $context,
+        ),
 
-		'updated_at_gmt'                    => array(
-			'description' => __( 'The date the campaign was last modified, as GMT.', 'revenue' ),
-			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
-			'readonly'    => true,
-		),
+        // optional if target_page is 'custom', used to store the custom page ID.
+        // Future extension: We can consider allowing multiple custom pages in the future,
+        // in which case this could be an array of page IDs instead of a single integer.
+        'custom_page_id' => array(
+            'description' => __('Page ID when target_page is custom', 'revenue'),
+            'type'        => 'integer',
+            'context'     => $context,
+        ),
+
+        'created_at_gmt'                     => array(
+            'description' => __('The date the campaign was created, as GMT.', 'revenue'),
+            'type'        => 'date-time',
+            'context'     => $context,
+            'readonly'    => true,
+        ),
+
+        'updated_at_gmt'                    => array(
+            'description' => __('The date the campaign was last modified, as GMT.', 'revenue'),
+            'type'        => 'date-time',
+            'context'     => $context,
+            'readonly'    => true,
+        ),
+
+        'trigger_type'                => array(
+            'description' => __('campaign trigger type', 'revenue'),
+            'type'        => 'string',
+            'enum'        => array(
+                'x_products',
+                'x_products_plus_specific_products',
+                'x_products_plus_specific_category',
+                'specific_products',
+                'specific_category',
+                'all_products',
+            ),
+            'context'     => $context,
+        ),
+
+        'trigger_product_ids' => array(
+            'description' => __('List of product IDs that trigger the campaign', 'revenue'),
+            'type'        => 'array',
+            'context'     => $context,
+            'items'       => array(
+                'type' => 'integer',
+            ),
+        ),
+
+		// will have values when categories or all product is selected from the trigger type.
+        'excluded_trigger_product_ids'      => array(
+            'description' => __('List of product IDs to exclude from triggers', 'revenue'),
+            'type'        => 'array',
+            'context'     => $context,
+            'items'       => array(
+                'type' => 'integer',
+            ),
+        ),
 
 		'products'                               => array(
 			'description' => __( 'List of Offered products (one entry per product)', 'revenue' ),
 			'type'        => 'array',
 			'context'     => array( 'view', 'edit' ),
-			'items'       => array(
-				'type'       => 'object',
-				'properties' => array(
-					'id' => array(
-						'description' => __( 'Product ID (used to fetch product from DB)', 'revenue' ),
-						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
-					),
-					'title' => array(
-						'description' => __( 'Product title (editable label)', 'revenue' ),
-						'type'        => 'string',
-						'context'     => array( 'view', 'edit' ),
-					),
-					'quantity' => array(
-						'description' => __( 'Quantity for this offered product', 'revenue' ),
-						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
-						'default'     => 1,
-						'minimum'     => 1,
-					),
-				),
-			),
+			'items'       => $base_product_schema,
 		),
 
+		// if required, checkbox will be checked and disabled.
 		'main_products_required_enabled'                             => array(
 			'description' => __( 'Main products required enabled', 'revenue' ),
 			'type'        => 'boolean',
@@ -116,16 +227,7 @@ $schema = array(
 							'products' => array(
 								'description' => __( 'List of specific products with discounts and quantities', 'revenue' ),
 								'type' => 'array',
-								'items' => array(
-									'type' => 'object',
-									'properties' => array(
-										'id' => array( 'type' => 'integer' ),
-										'title' => array( 'type' => 'string' ),
-										'quantity' => array( 'type' => 'integer', 'default' => 1, 'minimum' => 1 ),
-										'discount_value' => array( 'type' => 'number' ),
-										'discount_type' => array( 'type' => 'string', 'enum' => array( 'percentage', 'fixed', 'fixed_price' ) ),
-									),
-								),
+								'items' => $base_product_schema,
 							),
 						),
 					),
@@ -133,24 +235,7 @@ $schema = array(
 			),
 		),
 
-		'offer' => array(
-			'description' => __( 'Offer details when campaign applies to all products', 'revenue' ),
-			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
-			'properties'  => array(
-				'value' => array(
-					'description' => __( 'Offer value applied to all products', 'revenue' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'type' => array(
-					'description' => __( 'Offer type applied to all products', 'revenue' ),
-					'type'        => 'string',
-					'enum'        => array( 'percentage', 'fixed', 'fixed_price' ),
-					'context'     => array( 'view', 'edit' ),
-				),
-			),
-		),
+		'offer' => $offer_schema,
 
 		'offer_on_main_products_enabled'                             => array(
 			'description' => __( 'Offer on main product enabled', 'revenue' ),
@@ -386,7 +471,7 @@ $schema = array(
 			'description' => __( 'Campaign animated add to cart animation type', 'revenue' ),
 			'type'        => 'string',
 			'context'     => array( 'view', 'edit' ),
-			'enum'        => array_keys( revenue()->get_campaign_animated_add_to_cart_animation_types() ),
+			'enum'        => array_keys( $animation_types ),
 		),
 		'delay_between_loop' => array(
 			'description' => __( 'Delay between animation loops', 'revenue' ),
