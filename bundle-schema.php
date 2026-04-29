@@ -10,79 +10,37 @@ $offer_type_enum = array(
     'free',
 );
 $context = array( 'view', 'edit' );
-$product_discount_schema = array(
-    'type'       => 'object',
-    'required'   => array( 'product_id', 'discount_value', 'discount_type' ),
-    'properties' => array(
-        'product_id' => array(
-            'description' => __('Product ID.', 'revenue'),
-            'type'        => 'integer',
-            'context'     => $context,
-        ),
-        'title' => array(
-            'description' => __('Editable product name.', 'revenue'),
-            'type'        => 'string',
-            'context'     => $context,
-        ),
-        'quantity'   => array(
-            'description' => __('Product quantity.', 'revenue'),
-            'type'        => 'integer',
-            'context'     => $context,
-            'default'     => 1,
-            'minimum'     => 1,
-        ),
-        'discount_value' => array(
-            'description' => __('Discount value.', 'revenue'),
-            'type'        => 'number',
-            'context'     => $context,
-        ),
-        'discount_type' => array(
-            'description' => __('Discount type.', 'revenue'),
-            'type'        => 'string',
-            'enum'        => $offer_type_enum,
-            'context'     => $context,
-        ),
-    ),
+$base_product_schema = array(
+	'type'       => 'object',
+	'required'   => array( 'product_id', 'quantity' ),
+	'properties' => array(
+		'product_id' => array(
+			'description' => __('Product ID.', 'revenue'),
+			'type'        => 'integer',
+			'context'     => $context,
+		),
+		'product_name' => array(
+			'description' => __('Editable product name.', 'revenue'),
+			'type'        => 'string',
+			'context'     => $context,
+		),
+		'quantity'   => array(
+			'description' => __('Product quantity.', 'revenue'),
+			'type'        => 'integer',
+			'context'     => $context,
+			'default'     => 1,
+			'minimum'     => 1,
+		),
+	),
 );
-$bundle_item_schema = array(
-    'type'       => 'object',
-    'properties' => array(
-        'product_id' => array(
-            'description' => __('Product ID.', 'revenue'),
-            'type'        => 'integer',
-            'context'     => $context,
-        ),
-        'product_name' => array(
-            'description' => __('Editable product name.', 'revenue'),
-            'type'        => 'string',
-            'context'     => $context,
-        ),
-        'quantity'     => array(
-            'description' => __('Bundle item quantity.', 'revenue'),
-            'type'        => 'integer',
-            'context'     => $context,
-            'default'     => 1,
-        ),
-        'discount_value' => array(
-            'description' => __('Discount value.', 'revenue'),
-            'type'        => 'number',
-            'context'     => $context,
-        ),
-        'discount_type' => array(
-            'description' => __('Discount type.', 'revenue'),
-            'type'        => 'string',
-            'enum'        => $offer_type_enum,
-            'context'     => $context,
-        ),
-    ),
-);
-$global_offer_schema = array(
+
+$offer_schema = array(
     'type'       => 'object',
     'required'   => array( 'discount_value', 'discount_type' ),
     'properties' => array(
         'discount_value' => array(
             'description' => __('Offer value applied to all products', 'revenue'),
-            'type'        => 'string',
+            'type'        => 'number',
             'context'     => $context,
         ),
         'discount_type' => array(
@@ -93,6 +51,19 @@ $global_offer_schema = array(
         ),
     ),
 );
+$product_discount_schema = array(
+    'type'       => 'object',
+    'required'   => array( 'product_id', 'quantity', 'discount_value', 'discount_type' ),
+    'properties' => array(
+        'product_id' => $base_product_schema['properties']['product_id'],
+        'title' => $base_product_schema['properties']['product_name'],
+        'quantity'   => $base_product_schema['properties']['quantity'],
+        'discount_value' => $offer_schema['properties']['discount_value'],
+        'discount_type' => $offer_schema['properties']['discount_type'],
+    ),
+);
+
+
 // starts with campaign. ( the main object )
 $bundle_schema = array(
     '$schema'    => 'http://json-schema.org/draft-04/schema#',
@@ -209,18 +180,15 @@ $bundle_schema = array(
             'enum'        => array( 'none', 'free_gift', 'upsell' ),
         ),
 
+		// condition applied based on depedency of extra_product_mode.
         'extra_items'                            => array(
             'description' => __('List of bundle items (both free gifts and upsells). Each item keeps product_id and allows editable name and quantity.', 'revenue'),
             'type'        => 'array',
             'context'     => $context,
-            'items'       => array(
-                'type'       => $bundle_item_schema['type'],
-                'properties' => $bundle_item_schema['properties'],
-            ),
+            'items'       => array(),
         ),
 
         // additional and advanced settings.
-
         'text_settings' => array(
             'description' => __('Text settings for bundle display', 'revenue'),
             'type'        => 'object',
@@ -241,6 +209,7 @@ $bundle_schema = array(
                     'type'        => 'string',
                     'context'     => $context,
                 ),
+				// only in bundle discount.
                 'badge_text' => array(
                     'description' => __('Optional badge label text', 'revenue'),
                     'type'        => 'string',
@@ -421,6 +390,58 @@ $bundle_schema = array(
                 ),
             ),
         ),
+		'disable_coupon_field' => array(
+			'description' => __('Whether to disable coupon field when this bundle is applied', 'revenue' ),
+			'type'=> 'boolean',
+			'default'     => false,
+			'context'     => $context,
+		),
+		'limit_free_gift_per_order' => array(
+			'description' => __('Whether to limit free gift to one per order', 'revenue' ),
+			'type'        => 'boolean',
+			'default'     => false,
+			'context'     => $context,
+		),
+    ),
+    'dependencies' => array(
+        'extra_product_mode' => array(
+            'oneOf' => array(
+                array(
+                    'properties' => array(
+                        'extra_product_mode' => array(
+                            'enum' => array( 'none' ),
+                        ),
+                    ),
+                    'not' => array(
+                        'required' => array( 'extra_items' ),
+                    ),
+                ),
+                array(
+                    'properties' => array(
+                        'extra_product_mode' => array(
+                            'enum' => array( 'free_gift' ),
+                        ),
+                        'extra_items' => array(
+                            'type'  => 'array',
+                            'items' => $base_product_schema,
+                        ),
+                    ),
+                    'required' => array( 'extra_items' ),
+                ),
+                array(
+                    'properties' => array(
+                        'extra_product_mode' => array(
+                            'enum' => array( 'upsell' ),
+                        ),
+                        'extra_items' => array(
+                            'type'  => 'array',
+                            'items' => $product_discount_schema,
+                        ),
+                    ),
+                    'required' => array( 'extra_items' ),
+                ),
+            ),
+        ),
     ),
     'oneOf' => array(
         array(
@@ -441,26 +462,14 @@ $bundle_schema = array(
                     'enum' => array( 'all_product' ),
                 ),
                 'global_offer' => array(
-                    'type'       => $global_offer_schema['type'],
-                    'required'   => $global_offer_schema['required'],
-                    'properties' => $global_offer_schema['properties'],
+                    'type'       => $offer_schema['type'],
+                    'required'   => $offer_schema['required'],
+                    'properties' => $offer_schema['properties'],
                 ),
                 
                 'offer_products' => array(
                     'type' => 'array',
-                    'items' => array(
-                        'type' => 'object',
-                        'properties' => array(
-                            'product_id' => array( 'type' => 'integer' ),
-                            'quantity' => array(
-                                'description' => __('Quantity for this offered product', 'revenue'),
-                                'type'        => 'integer',
-                                'context'     => $context,
-                                'default'     => 1,
-                                'minimum'     => 1,
-                            ),
-                        ),
-                    ),
+                    'items' => $base_product_schema,
                 ),
             ),
             'required' => array( 'offer_scope', 'global_offer' ),
