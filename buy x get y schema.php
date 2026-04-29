@@ -1,5 +1,70 @@
 <?php
-$schema = array(
+
+
+$offer_type_enum = array(
+    'percentage',
+    'fixed_unit_discount',
+    'fixed_total_discount',
+    'fixed_unit_price',
+    'fixed_total_price',
+    'no_discount',
+    'free',
+);
+$context = array( 'view', 'edit' );
+$base_product_schema = array(
+	'type'       => 'object',
+	'required'   => array( 'product_id', 'quantity' ),
+	'properties' => array(
+		'product_id' => array(
+			'description' => __('Product ID.', 'revenue'),
+			'type'        => 'integer',
+			'context'     => $context,
+		),
+		'product_name' => array(
+			'description' => __('Editable product name.', 'revenue'),
+			'type'        => 'string',
+			'context'     => $context,
+		),
+		'quantity'   => array(
+			'description' => __('Product quantity.', 'revenue'),
+			'type'        => 'integer',
+			'context'     => $context,
+			'default'     => 1,
+			'minimum'     => 1,
+		),
+	),
+);
+
+$offer_schema = array(
+    'type'       => 'object',
+    'required'   => array( 'discount_value', 'discount_type' ),
+    'properties' => array(
+        'discount_value' => array(
+            'description' => __('Offer value applied to all products', 'revenue'),
+            'type'        => 'number',
+            'context'     => $context,
+        ),
+        'discount_type' => array(
+            'description' => __('Offer type applied to all products', 'revenue'),
+            'type'        => 'string',
+            'enum'        => $offer_type_enum,
+            'context'     => $context,
+        ),
+    ),
+);
+$product_discount_schema = array(
+    'type'       => 'object',
+    'required'   => array( 'product_id', 'quantity', 'discount_value', 'discount_type' ),
+    'properties' => array(
+        'product_id' => $base_product_schema['properties']['product_id'],
+        'title' => $base_product_schema['properties']['product_name'],
+        'quantity'   => $base_product_schema['properties']['quantity'],
+        'discount_value' => $offer_schema['properties']['discount_value'],
+        'discount_type' => $offer_schema['properties']['discount_type'],
+    ),
+);
+
+$bxgy_schema = array(
 	'$schema'    => 'http://json-schema.org/draft-04/schema#',
 	'title'      => $this->post_type,
 	'type'       => 'object',
@@ -7,21 +72,21 @@ $schema = array(
 		'id'                                   => array(
 			'description' => __( 'Unique identifier for campaign.', 'revenue' ),
 			'type'        => 'integer',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'readonly'    => true,
 		),
 
 		'name'                        => array(
 			'description' => __( 'Campaign name.', 'revenue' ),
 			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 
 		'type'                        => array(
 			'description' => __( 'campaign type.', 'revenue' ),
 			'type'        => 'string',
 			'default'     => 'bundle',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 
 		'status'                      => array(
@@ -29,20 +94,20 @@ $schema = array(
 			'type'        => 'string',
 			'default'     => 'draft',
 			'enum'        => array( 'draft', 'published' ),
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 
 		'created_at_gmt'                     => array(
 			'description' => __( 'The date the campaign was created, as GMT.', 'revenue' ),
 			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'readonly'    => true,
 		),
 
 		'updated_at_gmt'                    => array(
 			'description' => __( 'The date the campaign was last modified, as GMT.', 'revenue' ),
 			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'readonly'    => true,
 		),
 		// admin panel option - Display In.
@@ -57,13 +122,13 @@ $schema = array(
 				'specific_category',
 				'all_products',
 			),
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 
 		'trigger_products_id' => array(
 			'description' => __( 'List of product IDs that trigger the campaign', 'revenue' ),
 			'type'        => 'array',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'items'       => array(
 				'type' => 'integer',
 			),
@@ -72,40 +137,65 @@ $schema = array(
 		'trigger_exclude_products_id'       => array(
 			'description' => __( 'List of product IDs to exclude from triggers', 'revenue' ),
 			'type'        => 'array',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'items'       => array(
 				'type' => 'integer',
 			),
 		),
 
-		'offer_on'                             => array(
+		'target_page' => array(
+            'description' => __('Where the campaign will be displayed', 'revenue'),
+            'type'        => 'string',
+            'enum'        => array(
+                'product',
+                'cart',
+                'checkout',
+                'thank_you',
+                'my_account',
+                'shop',
+                'home',
+                'custom',
+            ),
+            'context'     => $context,
+        ),
+
+        // optional if target_page is 'custom', used to store the custom page ID.
+        // Future extension: We can consider allowing multiple custom pages in the future,
+        // in which case this could be an array of page IDs instead of a single integer.
+        'custom_page_id' => array(
+            'description' => __('Page ID when target_page is custom', 'revenue'),
+            'type'        => 'integer',
+            'context'     => $context,
+        ),
+
+		'offer_scope'                             => array(
 			'description' => __( 'Offer on', 'revenue' ),
 			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'enum'        => array( 'all_product', 'specific_product' ),
 		),
 
 		'products'                               => array(
 			'description' => __( 'List of Offered products (one entry per product)', 'revenue' ),
 			'type'        => 'array',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'items'       => array(
 				'type'       => 'object',
 				'properties' => array(
 					'id' => array(
 						'description' => __( 'Product ID (used to fetch product from DB)', 'revenue' ),
 						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
+						'context'     => $context,
 					),
 					'title' => array(
 						'description' => __( 'Product title (editable label)', 'revenue' ),
 						'type'        => 'string',
-						'context'     => array( 'view', 'edit' ),
+						'context'     => $context,
 					),
 					'quantity' => array(
 						'description' => __( 'Quantity for this offered product', 'revenue' ),
 						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
+						'context'     => $context,
 						'default'     => 1,
 						'minimum'     => 1,
 					),
@@ -117,55 +207,55 @@ $schema = array(
 		'offer_all' => array(
 			'description' => __( 'Offer details when campaign applies to all products', 'revenue' ),
 			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'properties'  => array(
 				'offer_value' => array(
 					'description' => __( 'Offer value applied to all products', 'revenue' ),
 					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				'offer_type' => array(
 					'description' => __( 'Offer type applied to all products', 'revenue' ),
 					'type'        => 'string',
 					'enum'        => array( 'percentage', 'fixed', 'fixed_price' ),
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 			),
 		),
 		'y_products' => array(
 			'description' => __( 'List of Y products (one entry per product)', 'revenue' ),
 			'type'        => 'array',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'items'       => array(
 				'type'       => 'object',
 				'properties' => array(
 					'id' => array(
 						'description' => __( 'Product ID (used to fetch product from DB)', 'revenue' ),
 						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
+						'context'     => $context,
 					),
 					'title' => array(
 						'description' => __( 'Product title (editable label)', 'revenue' ),
 						'type'        => 'string',
-						'context'     => array( 'view', 'edit' ),
+						'context'     => $context,
 					),
 					'offered_quantity' => array(
 						'description' => __( 'Quantity for this offered product', 'revenue' ),
 						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
+						'context'     => $context,
 						'default'     => 1,
 						'minimum'     => 1,
 					),
 					'offer_value' => array(
 						'description' => __( 'Offer value applied to all products', 'revenue' ),
 						'type'        => 'string',
-						'context'     => array( 'view', 'edit' ),
+						'context'     => $context,
 					),
 					'offer_type' => array(
 						'description' => __( 'Offer type applied to all products', 'revenue' ),
 						'type'        => 'string',
 						'enum'        => array( 'percentage', 'fixed', 'fixed_price' ),
-						'context'     => array( 'view', 'edit' ),
+						'context'     => $context,
 					),
 				),
 			),
@@ -174,27 +264,27 @@ $schema = array(
 		'text_settings' => array(
 			'description' => __( 'Text settings for bundle display', 'revenue' ),
 			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'properties'  => array(
 				'heading' => array(
 					'description' => __( 'Main heading text', 'revenue' ),
 					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				'subheading' => array(
 					'description' => __( 'Subheading text', 'revenue' ),
 					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				'button_text' => array(
 					'description' => __( 'Call-to-action button text', 'revenue' ),
 					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				'badge_text' => array(
 					'description' => __( 'Optional badge label text', 'revenue' ),
 					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				
 				// Note: The following fields are reserved for future use and not currently editable,
@@ -203,17 +293,17 @@ $schema = array(
 				// 'free_shipping_message' => array(
 				// 	'description' => __( 'Free shipping message shown to customers', 'revenue' ),
 				// 	'type'        => 'string',
-				// 	'context'     => array( 'view', 'edit' ),
+				// 	'context'     => $context,
 				// ),
 				// 'upsell_product_message' => array(
 				// 	'description' => __( 'Message shown for upsell products', 'revenue' ),
 				// 	'type'        => 'string',
-				// 	'context'     => array( 'view', 'edit' ),
+				// 	'context'     => $context,
 				// ),
 				// 'free_gift_message' => array(
 				// 	'description' => __( 'Message shown for free gift items', 'revenue' ),
 				// 	'type'        => 'string',
-				// 	'context'     => array( 'view', 'edit' ),
+				// 	'context'     => $context,
 				// ),
 			),
 		),
@@ -221,36 +311,36 @@ $schema = array(
 		'countdown_settings' => array(
 			'description' => __( 'Countdown timer settings', 'revenue' ),
 			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'properties'  => array(
 				'enabled' => array(
 					'description' => __( 'Whether countdown is enabled', 'revenue' ),
 					'type'        => 'boolean',
 					'default'     => false,
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				'duration_minutes' => array(
 					'description' => __( 'Countdown duration in minutes', 'revenue' ),
 					'type'        => 'integer',
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				'is_evergreen' => array(
 					'description' => __( 'Whether the timer is evergreen (per-user)', 'revenue' ),
 					'type'        => 'boolean',
 					'default'     => false,
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				'message' => array(
 					'description' => __( 'Message displayed with countdown timer', 'revenue' ),
 					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 			),
 		),
 		'placement_settings' => array(
 			'description' => __( 'Placement Settings', 'revenue' ),
 			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'oneOf' => array(
 				array(
 					'properties' => array(
@@ -275,27 +365,27 @@ $schema = array(
 			'description' => __( 'Campaign Time Schedule End Time status', 'revenue' ),
 			'type'        => 'boolean',
 			'default'     => false,
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 		'schedule_start_date' => array(
 			'description' => __( 'Campaign Schedule start date', 'revenue' ),
 			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 		'schedule_start_time' => array(
 			'description' => __( 'Campaign Schedule start time', 'revenue' ),
 			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 		'schedule_end_date' => array(
 			'description' => __( 'Campaign Schedule end date', 'revenue' ),
 			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 		'schedule_end_time' => array(
 			'description' => __( 'Campaign Schedule end time', 'revenue' ),
 			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 
 		// Cart / product interaction settings
@@ -303,72 +393,72 @@ $schema = array(
 			'description' => __( 'Skip Add to cart button for offered products', 'revenue' ),
 			'type'        => 'boolean',
 			'default'     => false,
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 		'is_quantity_selector_enabled' => array(
 			'description' => __( 'Enabled Quantity selector for offered products', 'revenue' ),
 			'type'        => 'boolean',
 			'default'     => false,
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 		'offered_product_on_cart_action' => array(
 			'description' => __( 'If the offered products are already in cart action', 'revenue' ),
 			'type'        => 'string',
 			'enum'        => array( 'do_nothing', 'hide' ),
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 		'offered_product_click_action' => array(
 			'description' => __( 'Action if click on product title or image', 'revenue' ),
 			'type'        => 'string',
 			'enum'        => array( 'go_to_product_page', 'do_nothing' ),
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 		'additional_id' => array(
 			'description' => __( 'Additional CSS id', 'revenue' ),
 			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 		'additional_class' => array(
 			'description' => __( 'Additional CSS class', 'revenue' ),
 			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 
 		// Animated Add to Cart settings
 		'add_to_cart_animation_type' => array(
 			'description' => __( 'Campaign animated add to cart animation type', 'revenue' ),
 			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'enum'        => array_keys( revenue()->get_campaign_animated_add_to_cart_animation_types() ),
 		),
 		'delay_between_loop' => array(
 			'description' => __( 'Delay between animation loops', 'revenue' ),
 			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 		),
 
 		// Design settings
 		'design_settings' => array(
 			'description' => __( 'Design and theme settings for the bundle display', 'revenue' ),
 			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
+			'context'     => $context,
 			'properties'  => array(
 				'template_type' => array(
 					'description' => __( 'Template style', 'revenue' ),
 					'type'        => 'string',
 					'enum'        => array( 'light', 'dark' ),
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				'template_size' => array(
 					'description' => __( 'Template size', 'revenue' ),
 					'type'        => 'string',
 					'enum'        => array( 'small', 'medium', 'large' ),
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 				'theme_colors' => array(
 					'description' => __( 'Color code (hex or rgb)', 'revenue' ),
 					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
+					'context'     => $context,
 				),
 			),
 		),
