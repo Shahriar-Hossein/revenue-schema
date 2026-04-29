@@ -53,18 +53,6 @@ $offer_schema = array(
         ),
     ),
 );
-$product_discount_schema = array(
-    'type'       => 'object',
-    'required'   => array( 'product_id', 'product_name', 'quantity', 'discount_value', 'discount_type' ),
-	'context'     => $context,
-    'properties' => array(
-        'product_id' => $base_product_schema['properties']['product_id'],
-        'product_name' => $base_product_schema['properties']['product_name'],
-        'quantity'   => $base_product_schema['properties']['quantity'],
-        'discount_value' => $offer_schema['properties']['discount_value'],
-        'discount_type' => $offer_schema['properties']['discount_type'],
-    ),
-);
 
 $animation_types = array(
 	'wobble' => __( 'Wobble', 'revenue' ),
@@ -244,7 +232,7 @@ $schema = array(
 			'context'     => array( 'view', 'edit' ),
 		),
 
-		'extra_products_type'                    => array(
+		'extra_products_mode'                    => array(
 			'description' => __( 'Bundle offer mode: none, free_gift, or upsell. Items also carry a `type`.', 'revenue' ),
 			'type'        => 'string',
 			'context'     => array( 'view', 'edit' ),
@@ -252,48 +240,14 @@ $schema = array(
 			'enum'        => array( 'none', 'free_gift', 'upsell' ),
 		),
 
-		'extra_products'                         => array(
+		'extra_items'                         => array(
 			'description' => __( 'List of bundle items (both free gifts and upsells). Each item keeps product_id and allows editable name and quantity.', 'revenue' ),
 			'type'        => 'array',
 			'context'     => array( 'view', 'edit' ),
-			'items'       => array(
-				'type'       => 'object',
-				'properties' => array(
-					'id' => array(
-						'description' => __( 'Product id (used to fetch product from DB)', 'revenue' ),
-						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
-					),
-					'name'  => array(
-						'description' => __( 'Editable label/name shown to customers', 'revenue' ),
-						'type'        => 'string',
-						'context'     => array( 'view', 'edit' ),
-					),
-					'quantity'   => array(
-						'description' => __( 'Quantity for this bundle item', 'revenue' ),
-						'type'        => 'integer',
-						'context'     => array( 'view', 'edit' ),
-						'default'     => 1,
-					),
-					// should only be available when extra_products_type is upsell,
-					// but we keep it here for simplicity and flexibility.
-					// We will handle the validation in the code.
-					'discount_value' => array(
-                        'description' => __( 'Discount value applied to this extra product', 'revenue' ),
-                        'type'        => 'number',
-                        'context'     => array( 'view', 'edit' ),
-                    ),
-                    'discount_type' => array(
-                        'description' => __( 'Discount type for this extra product', 'revenue' ),
-                        'type'        => 'string',
-                        'enum'        => array( 'percentage', 'fixed', 'fixed_price' ),
-                        'context'     => array( 'view', 'edit' ),
-                    ),
-				),
-			),
+			'items'       => $base_product_schema,
 		),
 
-		'extra_products_min_quantity_required' => array(
+		'min_trigger_quantity' => array(
 			'description' => __( 'Minimum quantity of (normal) products required to activate the offer', 'revenue' ),
 			'type'        => 'integer',
 			'context'     => array( 'view', 'edit' ),
