@@ -301,208 +301,214 @@ $schema = array(
 			'minimum'     => 1,
 		),
 
-		// Additional and Advanced settings.
+		// additional and advanced settings.
+        'text_settings' => array(
+            'description' => __('Text settings for bundle display', 'revenue'),
+            'type'        => 'object',
+            'context'     => $context,
+            'properties'  => array(
+                'heading' => array(
+                    'description' => __('Main heading text', 'revenue'),
+                    'type'        => 'string',
+                    'context'     => $context,
+                ),
+                'subheading' => array(
+                    'description' => __('Subheading text', 'revenue'),
+                    'type'        => 'string',
+                    'context'     => $context,
+                ),
+                'button_text' => array(
+                    'description' => __('Call-to-action button text', 'revenue'),
+                    'type'        => 'string',
+                    'context'     => $context,
+                ),
 
-		'text_settings' => array(
-			'description' => __( 'Text settings for bundle display', 'revenue' ),
-			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
-			'properties'  => array(
-				'heading' => array(
-					'description' => __( 'Main heading text', 'revenue' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'subheading' => array(
-					'description' => __( 'Subheading text', 'revenue' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'button_text' => array(
-					'description' => __( 'Call-to-action button text', 'revenue' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'badge_text' => array(
-					'description' => __( 'Optional badge label text', 'revenue' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'countdown_message' => array(
-					'description' => __( 'Message displayed with countdown timer', 'revenue' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-				// Note: The following fields are reserved for future use and not currently editable,
-				// but we keep them in the schema for reference and potential future expansion.
-				// PE said not needed, we will give custom work for specific user for this.
-				// 'free_shipping_message' => array(
-				// 	'description' => __( 'Free shipping message shown to customers', 'revenue' ),
-				// 	'type'        => 'string',
-				// 	'context'     => array( 'view', 'edit' ),
-				// ),
-				// 'upsell_product_message' => array(
-				// 	'description' => __( 'Message shown for upsell products', 'revenue' ),
-				// 	'type'        => 'string',
-				// 	'context'     => array( 'view', 'edit' ),
-				// ),
-				// 'free_gift_message' => array(
-				// 	'description' => __( 'Message shown for free gift items', 'revenue' ),
-				// 	'type'        => 'string',
-				// 	'context'     => array( 'view', 'edit' ),
-				// ),
-			),
-		),
+                // Note: The following fields are reserved for future use and not currently editable,
+                // but we keep them in the schema for reference and potential future expansion.
+                // PE said not needed, we will give custom work for specific user for this.
+                // 'free_shipping_message' => array(
+                //     'description' => __( 'Free shipping message shown to customers', 'revenue' ),
+                //     'type'        => 'string',
+                //     'context'     => array( 'view', 'edit' ),
+                // ),
+                // 'upsell_product_message' => array(
+                //     'description' => __( 'Message shown for upsell products', 'revenue' ),
+                //     'type'        => 'string',
+                //     'context'     => array( 'view', 'edit' ),
+                // ),
+                // 'free_gift_message' => array(
+                //     'description' => __( 'Message shown for free gift items', 'revenue' ),
+                //     'type'        => 'string',
+                //     'context'     => array( 'view', 'edit' ),
+                // ),
+            ),
+        ),
 
-		'countdown_settings' => array(
-			'description' => __( 'Countdown timer settings', 'revenue' ),
-			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
-			'properties'  => array(
-				'enabled' => array(
-					'description' => __( 'Whether countdown is enabled', 'revenue' ),
-					'type'        => 'boolean',
-					'default'     => false,
-					'context'     => array( 'view', 'edit' ),
-				),
-				'duration_minutes' => array(
-					'description' => __( 'Countdown duration in minutes', 'revenue' ),
-					'type'        => 'integer',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'is_evergreen' => array(
-					'description' => __( 'Whether the timer is evergreen (per-user)', 'revenue' ),
-					'type'        => 'boolean',
-					'default'     => false,
-					'context'     => array( 'view', 'edit' ),
-				),
-			),
-		),
-		'placement_settings' => array(
-			'description' => __( 'Placement Settings', 'revenue' ),
-			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
-			
-			'oneOf' => array(
-				array(
-					'properties' => array(
-						'placement_type' => array( 'enum' => array( 'in_page' ) ),
-						'position' => array( 'enum' => array( 'before_add_to_cart', 'after_add_to_cart', 'before_product', 'after_product_summary' ) ),
-					),
-					'required' => array( 'placement_type', 'position' ),
-				),
-				array(
-					'properties' => array(
-						'placement_type' => array( 'enum' => array( 'popup' ) ),
-						'position' => array( 'enum' => array( 'after_click_add_to_cart', 'after_x_time' ) ),
-						'delay_seconds' => array( 'type' => 'integer' ),
-					),
-					'required' => array( 'placement_type', 'position', 'delay_seconds' ),
-				),
-			),
-		),
+        'countdown_settings' => array(
+            'description' => __('Countdown timer settings', 'revenue'),
+            'type'        => 'object',
+            'context'     => $context,
+            'properties'  => array(
+                'is_enabled' => array(
+                    'description' => __('Whether countdown is enabled', 'revenue'),
+                    'type'        => 'boolean',
+                    'default'     => false,
+                    'context'     => $context,
+                ),
+                'duration_minutes' => array(
+                    'description' => __('Countdown duration in minutes', 'revenue'),
+                    'type'        => 'integer',
+                    'context'     => $context,
+                ),
+                'is_evergreen' => array(
+                    'description' => __('Whether the timer is evergreen (per-user)', 'revenue'),
+                    'type'        => 'boolean',
+                    'default'     => false,
+                    'context'     => $context,
+                ),
+                'message' => array(
+                    'description' => __('Message displayed with the countdown timer', 'revenue'),
+                    'type'        => 'string',
+                    'context'     => $context,
+                ),
+            ),
+        ),
+        'placement_settings' => array(
+            'description' => __('Placement Settings', 'revenue'),
+            'type'        => 'object',
+            'context'     => $context,
+            'oneOf' => array(
+                array(
+                    'properties' => array(
+                        'placement_type' => array( 'enum' => array( 'in_page' ) ),
+                        'position' => array( 'enum' => array( 'before_add_to_cart', 'after_add_to_cart', 'before_product', 'after_product_summary' ) ),
+                    ),
+                    'required' => array( 'placement_type', 'position' ),
+                ),
+                array(
+                    'properties' => array(
+                        'placement_type' => array( 'enum' => array( 'popup' ) ),
+                        'position' => array( 'enum' => array( 'after_click_add_to_cart', 'after_x_time' ) ),
+                        'delay_seconds' => array( 'type' => 'integer' ),
+                    ),
+                    'required' => array( 'placement_type', 'position', 'delay_seconds' ),
+                ),
+            ),
+        ),
 
-		// Schedule settings
-		'schedule_end_time_enabled' => array(
-			'description' => __( 'Campaign Time Schedule End Time status', 'revenue' ),
+        // Schedule settings
+        'schedule_end_time_enabled' => array(
+            'description' => __('Campaign Time Schedule End Time status', 'revenue'),
+            'type'        => 'boolean',
+            'default'     => false,
+            'context'     => $context,
+        ),
+        'schedule_start_date' => array(
+            'description' => __('Campaign Schedule start date', 'revenue'),
+            'type'        => 'date-time',
+            'context'     => $context,
+        ),
+        'schedule_start_time' => array(
+            'description' => __('Campaign Schedule start time', 'revenue'),
+            'type'        => 'date-time',
+            'context'     => $context,
+        ),
+        'schedule_end_date' => array(
+            'description' => __('Campaign Schedule end date', 'revenue'),
+            'type'        => 'date-time',
+            'context'     => $context,
+        ),
+        'schedule_end_time' => array(
+            'description' => __('Campaign Schedule end time', 'revenue'),
+            'type'        => 'date-time',
+            'context'     => $context,
+        ),
+
+        // Cart / product interaction settings
+        'skip_add_to_cart' => array(
+            'description' => __('Skip Add to cart button for offered products', 'revenue'),
+            'type'        => 'boolean',
+            'default'     => false,
+            'context'     => $context,
+        ),
+        'allow_quantity' => array(
+            'description' => __('Enabled Quantity selector for offered products', 'revenue'),
+            'type'        => 'boolean',
+            'default'     => false,
+            'context'     => $context,
+        ),
+        'in_cart_behavior' => array(
+            'description' => __('If the offered products are already in cart action', 'revenue'),
+            'type'        => 'string',
+            'enum'        => array( 'do_nothing', 'hide' ),
+            'context'     => $context,
+        ),
+        'product_click_action' => array(
+            'description' => __('Action if click on product title or image', 'revenue'),
+            'type'        => 'string',
+            'enum'        => array( 'go_to_product_page', 'do_nothing' ),
+            'context'     => $context,
+        ),
+        'css_id' => array(
+            'description' => __('Additional CSS id', 'revenue'),
+            'type'        => 'string',
+            'context'     => $context,
+        ),
+        'css_class' => array(
+            'description' => __('Additional CSS class', 'revenue'),
+            'type'        => 'string',
+            'context'     => $context,
+        ),
+
+        // Animated Add to Cart settings
+        'add_to_cart_animation' => array(
+            'description' => __('Campaign animated add to cart animation type', 'revenue'),
+            'type'        => 'string',
+            'context'     => $context,
+            'enum'        => array_keys($animation_types),
+        ),
+        'animation_loop_delay' => array(
+            'description' => __('Delay between animation loops', 'revenue'),
+            'type'        => 'string',
+            'context'     => $context,
+        ),
+
+        // Design settings
+        'design_settings' => array(
+            'description' => __('Design and theme settings for the bundle display', 'revenue'),
+            'type'        => 'object',
+            'context'     => $context,
+            'properties'  => array(
+                'template_type' => array(
+                    'description' => __('Template style', 'revenue'),
+                    'type'        => 'string',
+                    'enum'        => array( 'light', 'dark' ),
+                    'context'     => $context,
+                ),
+                'template_size' => array(
+                    'description' => __('Template size', 'revenue'),
+                    'type'        => 'string',
+                    'enum'        => array( 'small', 'medium', 'large' ),
+                    'context'     => $context,
+                ),
+                'theme_colors' => array(
+                    'description' => __('Color code (hex or rgb)', 'revenue'),
+                    'type'        => 'string',
+                    'context'     => $context,
+                ),
+            ),
+        ),
+		'disable_coupon_field' => array(
+			'description' => __('Whether to disable coupon field when this bundle is applied', 'revenue' ),
+			'type'=> 'boolean',
+			'default'     => false,
+			'context'     => $context,
+		),
+		'limit_free_gift_per_order' => array(
+			'description' => __('Whether to limit free gift to one per order', 'revenue' ),
 			'type'        => 'boolean',
 			'default'     => false,
-			'context'     => array( 'view', 'edit' ),
-		),
-		'schedule_start_date' => array(
-			'description' => __( 'Campaign Schedule start date', 'revenue' ),
-			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
-		),
-		'schedule_start_time' => array(
-			'description' => __( 'Campaign Schedule start time', 'revenue' ),
-			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
-		),
-		'schedule_end_date' => array(
-			'description' => __( 'Campaign Schedule end date', 'revenue' ),
-			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
-		),
-		'schedule_end_time' => array(
-			'description' => __( 'Campaign Schedule end time', 'revenue' ),
-			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
-		),
-
-		// Cart / product interaction settings
-		'skip_add_to_cart' => array(
-			'description' => __( 'Skip Add to cart button for offered products', 'revenue' ),
-			'type'        => 'boolean',
-			'default'     => false,
-			'context'     => array( 'view', 'edit' ),
-		),
-		'quantity_selector_enabled' => array(
-			'description' => __( 'Enabled Quantity selector for offered products', 'revenue' ),
-			'type'        => 'boolean',
-			'default'     => false,
-			'context'     => array( 'view', 'edit' ),
-		),
-		'offered_product_on_cart_action' => array(
-			'description' => __( 'If the offered products are already in cart action', 'revenue' ),
-			'type'        => 'string',
-			'enum'        => array( 'do_nothing', 'hide' ),
-			'context'     => array( 'view', 'edit' ),
-		),
-		'offered_product_click_action' => array(
-			'description' => __( 'Action if click on product title or image', 'revenue' ),
-			'type'        => 'string',
-			'enum'        => array( 'go_to_product_page', 'do_nothing' ),
-			'context'     => array( 'view', 'edit' ),
-		),
-		'additional_id' => array(
-			'description' => __( 'Additional CSS id', 'revenue' ),
-			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
-		),
-		'additional_class' => array(
-			'description' => __( 'Additional CSS class', 'revenue' ),
-			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
-		),
-
-		// Animated Add to Cart settings
-		'add_to_cart_animation_type' => array(
-			'description' => __( 'Campaign animated add to cart animation type', 'revenue' ),
-			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
-			'enum'        => array_keys( $animation_types ),
-		),
-		'delay_between_loop' => array(
-			'description' => __( 'Delay between animation loops', 'revenue' ),
-			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
-		),
-
-		// Design settings
-		'design_settings' => array(
-			'description' => __( 'Design and theme settings for the bundle display', 'revenue' ),
-			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
-			'properties'  => array(
-				'template_type' => array(
-					'description' => __( 'Template style', 'revenue' ),
-					'type'        => 'string',
-					'enum'        => array( 'light', 'dark' ),
-					'context'     => array( 'view', 'edit' ),
-				),
-				'template_size' => array(
-					'description' => __( 'Template size', 'revenue' ),
-					'type'        => 'string',
-					'enum'        => array( 'small', 'medium', 'large' ),
-					'context'     => array( 'view', 'edit' ),
-				),
-				'theme_colors' => array(
-					'description' => __( 'Color code (hex or rgb)', 'revenue' ),
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-			),
+			'context'     => $context,
 		),
 	),
 );
