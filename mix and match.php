@@ -11,34 +11,34 @@ $offer_type_enum = array(
 );
 $context = array( 'view', 'edit' );
 $base_product_schema = array(
-	'type'       => 'object',
-	'required'   => array( 'product_id', 'quantity' ),
-	'context'     => $context,
-	'properties' => array(
-		'product_id' => array(
-			'description' => __('Product ID.', 'revenue'),
-			'type'        => 'integer',
-			'context'     => $context,
-		),
-		'product_name' => array(
-			'description' => __('Editable product name.', 'revenue'),
-			'type'        => 'string',
-			'context'     => $context,
-		),
-		'quantity'   => array(
-			'description' => __('Product quantity.', 'revenue'),
-			'type'        => 'integer',
-			'context'     => $context,
-			'default'     => 1,
-			'minimum'     => 1,
-		),
-	),
+    'type'       => 'object',
+    'required'   => array( 'product_id', 'quantity' ),
+    'context'     => $context,
+    'properties' => array(
+        'product_id' => array(
+            'description' => __('Product ID.', 'revenue'),
+            'type'        => 'integer',
+            'context'     => $context,
+        ),
+        'product_name' => array(
+            'description' => __('Editable product name.', 'revenue'),
+            'type'        => 'string',
+            'context'     => $context,
+        ),
+        'quantity'   => array(
+            'description' => __('Product quantity.', 'revenue'),
+            'type'        => 'integer',
+            'context'     => $context,
+            'default'     => 1,
+            'minimum'     => 1,
+        ),
+    ),
 );
 
 $offer_schema = array(
     'type'       => 'object',
     'required'   => array( 'discount_value', 'discount_type' ),
-	'context'     => $context,
+    'context'     => $context,
     'properties' => array(
         'discount_value' => array(
             'description' => __('Offer value applied to all products', 'revenue'),
@@ -55,68 +55,76 @@ $offer_schema = array(
 );
 
 $schema = array(
-	'$schema'    => 'http://json-schema.org/draft-04/schema#',
-	'title'      => $this->post_type,
-	'type'       => 'object',
-	'properties' => array(
-		'id'                                   => array(
-			'description' => __( 'Unique identifier for campaign.', 'revenue' ),
-			'type'        => 'integer',
-			'context'     => array( 'view', 'edit' ),
-			'readonly'    => true,
-		),
+    '$schema'    => 'http://json-schema.org/draft-04/schema#',
+    'title'      => $this->post_type,
+    'type'       => 'object',
+    'properties' => array(
+        'id'                                   => array(
+            'description' => __('Unique identifier for campaign.', 'revenue'),
+            'type'        => 'integer',
+            'context'     => array( 'view', 'edit' ),
+            'readonly'    => true,
+        ),
 
-		'name'                        => array(
-			'description' => __( 'Campaign name.', 'revenue' ),
-			'type'        => 'string',
-			'context'     => array( 'view', 'edit' ),
-		),
+        'name'                        => array(
+            'description' => __('Campaign name.', 'revenue'),
+            'type'        => 'string',
+            'context'     => array( 'view', 'edit' ),
+        ),
 
-		'type'                        => array(
-			'description' => __( 'campaign type.', 'revenue' ),
-			'type'        => 'string',
-			'default'     => 'bundle',
-			'context'     => array( 'view', 'edit' ),
-		),
+        'type'                        => array(
+            'description' => __('campaign type.', 'revenue'),
+            'type'        => 'string',
+            'default'     => 'bundle',
+            'context'     => array( 'view', 'edit' ),
+        ),
 
-		'status'                      => array(
-			'description' => __( 'campaign status', 'revenue' ),
-			'type'        => 'string',
-			'default'     => 'draft',
-			'enum'        => array( 'draft', 'published' ),
-			'context'     => array( 'view', 'edit' ),
-		),
+        'status'                      => array(
+            'description' => __('campaign status', 'revenue'),
+            'type'        => 'string',
+            'default'     => 'draft',
+            'enum'        => array( 'draft', 'published' ),
+            'context'     => array( 'view', 'edit' ),
+        ),
 
-		'created_at_gmt'                     => array(
-			'description' => __( 'The date the campaign was created, as GMT.', 'revenue' ),
-			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
-			'readonly'    => true,
-		),
+        'created_at_gmt'                     => array(
+            'description' => __('The date the campaign was created, as GMT.', 'revenue'),
+            'type'        => 'date-time',
+            'context'     => array( 'view', 'edit' ),
+            'readonly'    => true,
+        ),
 
-		'updated_at_gmt'                    => array(
-			'description' => __( 'The date the campaign was last modified, as GMT.', 'revenue' ),
-			'type'        => 'date-time',
-			'context'     => array( 'view', 'edit' ),
-			'readonly'    => true,
-		),
+        'updated_at_gmt'                    => array(
+            'description' => __('The date the campaign was last modified, as GMT.', 'revenue'),
+            'type'        => 'date-time',
+            'context'     => array( 'view', 'edit' ),
+            'readonly'    => true,
+        ),
 
-		// Core part - start
+        // Core part - start
 
-		'sections'                               => array(
-			'description' => __( 'Sections containing groups of offered products', 'revenue' ),
-			'type'        => 'array',
-			'context'     => array( 'view', 'edit' ),
-			'items'       => array(
-				'type'       => 'object',
-				'properties' => array(
-					'title' => array(
-                        'description' => __( 'Section title/label', 'revenue' ),
+        'sections'                               => array(
+            'description' => __('Sections containing groups of offered products', 'revenue'),
+            'type'        => 'array',
+            'context'     => array( 'view', 'edit' ),
+            'items'       => array(
+                'type'       => 'object',
+                'oneOf'      => array(
+                    array(
+                        'required' => array( 'products' ),
+                    ),
+                    array(
+                        'required' => array( 'products', 'discount_type', 'discount_value' ),
+                    ),
+                ),
+                'properties' => array(
+                    'title' => array(
+                        'description' => __('Section title/label', 'revenue'),
                         'type'        => 'string',
                         'context'     => array( 'view', 'edit' ),
                     ),
                     'description' => array(
-                        'description' => __( 'Section description', 'revenue' ),
+                        'description' => __('Section description', 'revenue'),
                         'type'        => 'string',
                         'context'     => array( 'view', 'edit' ),
                     ),
@@ -126,194 +134,217 @@ $schema = array(
                     //     'context'     => array( 'view', 'edit' ),
                     // ),
                     'products' => array(
-						'description' => __( 'List of Offered products (one entry per product) within this section', 'revenue' ),
-						'type'        => 'array',
-						'context'     => array( 'view', 'edit' ),
-						'items'       => $base_product_schema,
-					),
-					'discount_rule' => array(
-						'description' => __( 'Optional discount rules for this section. If not provided, the main offer applies to products in this section.', 'revenue' ),
-						'type'        => 'object',
-						'context'     => array( 'view', 'edit' ),
+                        'description' => __('List of Offered products (one entry per product) within this section', 'revenue'),
+                        'type'        => 'array',
+                        'context'     => array( 'view', 'edit' ),
+                        'items'       => $base_product_schema,
+                    ),
+                    'discount_rule' => array(
+                        'description' => __('Optional discount rules for this section. If not provided, the main offer applies to products in this section.', 'revenue'),
+                        'type'        => 'object',
+                        'context'     => array( 'view', 'edit' ),
+                        'properties'  => array(
+                            // description is common for all rule types.
+                            // this description will be showed intially,
+                            // after adding, it will be replace with status bar.
+                            'description' => array(
+                                'description' => __('Description for this rule', 'revenue'),
+                                'type'        => 'string',
+                                'context'     => array( 'view', 'edit' ),
+                            ),
+                        ),
 						'oneOf'       => array(
 							array(
 								'properties' => array(
 									'rule_type' => array(
-										'description' => __( 'Type of discount rule', 'revenue' ),
+										'description' => __('Type of discount rule', 'revenue'),
 										'type'        => 'string',
 										'enum'        => array( 'fixed_quantity' ),
 										'context'     => array( 'view', 'edit' ),
 									),
 									'quantity' => array(
-										'description' => __( 'Fixed quantity required to trigger the discount', 'revenue' ),
+										'description' => __('Fixed quantity required to trigger the discount', 'revenue'),
 										'type'        => 'integer',
 										'minimum'     => 1,
 										'context'     => array( 'view', 'edit' ),
 									),
-									'description' => array(
-										'description' => __( 'Description for this rule', 'revenue' ),
-										'type'        => 'string',
-										'context'     => array( 'view', 'edit' ),
-									),
+												
 								),
 								'required' => array( 'rule_type', 'quantity' ),
 							),
-							array(
-								'properties' => array(
-									'rule_type' => array(
-										'description' => __( 'Type of discount rule', 'revenue' ),
-										'type'        => 'string',
-										'enum'        => array( 'range_quantity' ),
-										'context'     => array( 'view', 'edit' ),
-									),
-									'min' => array(
-										'description' => __( 'Minimum quantity for range rule', 'revenue' ),
-										'type'        => 'integer',
-										'minimum'     => 1,
-										'context'     => array( 'view', 'edit' ),
-									),
-									'max' => array(
-										'description' => __( 'Maximum quantity for range rule', 'revenue' ),
-										'type'        => 'integer',
-										'minimum'     => 1,
-										'context'     => array( 'view', 'edit' ),
-									),
-									'description' => array(
-										'description' => __( 'Description for this rule', 'revenue' ),
-										'type'        => 'string',
-										'context'     => array( 'view', 'edit' ),
-									),
-								),
-								'required' => array( 'rule_type', 'min', 'max' ),
-							),
+                            array(
+                                'properties' => array(
+                                    'rule_type' => array(
+                                        'description' => __('Type of discount rule', 'revenue'),
+                                        'type'        => 'string',
+                                        'enum'        => array( 'range_quantity' ),
+                                        'context'     => array( 'view', 'edit' ),
+                                    ),
+                                    'min' => array(
+                                        'description' => __('Minimum quantity for range rule', 'revenue'),
+                                        'type'        => 'integer',
+                                        'minimum'     => 1,
+                                        'context'     => array( 'view', 'edit' ),
+                                    ),
+                                    'max' => array(
+                                        'description' => __('Maximum quantity for range rule', 'revenue'),
+                                        'type'        => 'integer',
+                                        'minimum'     => 1,
+                                        'context'     => array( 'view', 'edit' ),
+                                    ),
+                                ),
+                   				 'required' => array( 'rule_type', 'min', 'max' ),
+                    		),
+                            array(
+                                'properties' => array(
+                                    'rule_type' => array(
+                                        'description' => __('Type of discount rule', 'revenue'),
+                                        'type'        => 'string',
+                                        'enum'        => array( 'order_value' ),
+                                        'context'     => array( 'view', 'edit' ),
+                                    ),
+                                    'order_value' => array(
+                                        'description' => __('Order value required to trigger the discount', 'revenue'),
+                                        'type'        => 'number',
+                                        'minimum'     => 0,
+                                        'context'     => array( 'view', 'edit' ),
+                                    ),
+                                ),
+                   				'required' => array( 'rule_type', 'order_value' ),
+                    		),
                             
-						),
-					),
-					// will only be available wehn 
+                        ),
+                    ),
+                    // Only used when offer_type is section_discount.
                     'discount_type' => array(
-                        'description' => __( 'Discount type for this section', 'revenue' ),
+                        'description' => __('Discount type for this section', 'revenue'),
                         'type'        => 'string',
-                        'enum'        => array( 'percentage', 'fixed', 'fixed_price' ),
+                        'enum'        => $offer_type_enum,
                         'context'     => array( 'view', 'edit' ),
                     ),
                     'discount_value' => array(
-                        'description' => __( 'Discount value for this section', 'revenue' ),
+                        'description' => __('Discount value for this section', 'revenue'),
                         'type'        => 'number',
                         'context'     => array( 'view', 'edit' ),
                     ),
                 ),
             ),
-		),
+        ),
 
 
-		'offer' => array(
-			'description' => __( 'Offer configuration for campaign', 'revenue' ),
-			'type'        => 'object',
-			'context'     => array( 'view', 'edit' ),
-			'oneOf'       => array(
-				array(
-					'properties' => array(
-						'offer_type' => array(
-							'description' => __( 'Offer mode', 'revenue' ),
-							'type'        => 'string',
-							'enum'        => array( 'global_discount' ),
-							'context'     => array( 'view', 'edit' ),
-						),
-						'discount_type' => array(
-							'description' => __( 'Discount type for the global offer', 'revenue' ),
-							'type'        => 'string',
-							'enum'        => array( 'percentage', 'fixed', 'fixed_price' ),
-							'context'     => array( 'view', 'edit' ),
-						),
-						'discount_value' => array(
-							'description' => __( 'Discount value for the global offer', 'revenue' ),
-							'type'        => 'number',
-							'context'     => array( 'view', 'edit' ),
-						),
-						
-						'free_gifts' => array(
-							'description' => __( 'Extra products for global offer', 'revenue' ),
-							'type'        => 'array',
-							'context'     => array( 'view', 'edit' ),
-							'items'       => $base_product_schema,
-						),
-					),
-				),
-				array(
-					'properties' => array(
-						'offer_type' => array(
-							'description' => __( 'Offer mode', 'revenue' ),
-							'type'        => 'string',
-							'enum'        => array( 'section' ),
-							'context'     => array( 'view', 'edit' ),
-						),
-						'free_gifts' => array(
-							'description' => __( 'Extra products for section offer', 'revenue' ),
-							'type'        => 'array',
-							'context'     => array( 'view', 'edit' ),
-							'items'       => $base_product_schema,
-						),
-					),
-				),
-				array(
-					'properties' => array(
-						'offer_type' => array(
-							'description' => __( 'Offer mode', 'revenue' ),
-							'type'        => 'string',
-							'enum'        => array( 'tiered_discount' ),
-							'context'     => array( 'view', 'edit' ),
-						),
-						'tier_type' => array(
-							'description' => __( 'Tiering type', 'revenue' ),
-							'type'        => 'string',
-							'enum'        => array( 'fixed_quantity', 'range_quantity', 'order_value' ),
-							'context'     => array( 'view', 'edit' ),
-						),
-						'tiers' => array(
-							'description' => __( 'List of tiers', 'revenue' ),
-							'type'        => 'array',
-							'context'     => array( 'view', 'edit' ),
-							'items'       => array(
-								'type'       => 'object',
-								'oneOf'      => array(
-									array(
-										'properties' => array(
-											'tier_type' => array( 'enum' => array( 'fixed_quantity' ) ),
-											'quantity'  => array( 'type' => 'integer', 'minimum' => 1 ),
-										),
-										'required' => array( 'tier_type', 'quantity' ),
-									),
-									array(
-										'properties' => array(
-											'tier_type' => array( 'enum' => array( 'range_quantity' ) ),
-											'min'  => array( 'type' => 'integer', 'minimum' => 1 ),
-											'max'  => array( 'type' => 'integer', 'minimum' => 1 ),
-										),
-										'required' => array( 'tier_type', 'min', 'max' ),
-									),
-									array(
-										'properties' => array(
-											'tier_type' => array( 'enum' => array( 'order_value' ) ),
-											'order_value'  => array( 'type' => 'number', 'minimum' => 0 ),
-										),
-										'required' => array( 'tier_type', 'order_value' ),
-									),
-								),
+        'offer' => array(
+            'description' => __('Offer configuration for campaign', 'revenue'),
+            'type'        => 'object',
+            'context'     => array( 'view', 'edit' ),
+            'oneOf'       => array(
+                array(
+                    'required' => array( 'offer_type', 'discount_type', 'discount_value', 'free_gifts' ),
+                    'properties' => array(
+                        'offer_type' => array(
+                            'description' => __('Offer mode', 'revenue'),
+                            'type'        => 'string',
+                            'enum'        => array( 'global_discount' ),
+                            'context'     => array( 'view', 'edit' ),
+                        ),
+                        'discount_type' => array(
+                            'description' => __('Discount type for the global offer', 'revenue'),
+                            'type'        => 'string',
+                            'enum'        => $offer_type_enum,
+                            'context'     => array( 'view', 'edit' ),
+                        ),
+                        'discount_value' => array(
+                            'description' => __('Discount value for the global offer', 'revenue'),
+                            'type'        => 'number',
+                            'context'     => array( 'view', 'edit' ),
+                        ),
+                        
+                        'free_gifts' => array(
+                            'description' => __('Extra products for global offer', 'revenue'),
+                            'type'        => 'array',
+                            'context'     => array( 'view', 'edit' ),
+                            'items'       => $base_product_schema,
+                        ),
+                    ),
+                ),
+                array(
+                    'required' => array( 'offer_type', 'free_gifts' ),
+                    'properties' => array(
+                        'offer_type' => array(
+                            'description' => __('Offer mode', 'revenue'),
+                            'type'        => 'string',
+                            'enum'        => array( 'section_discount' ),
+                            'context'     => array( 'view', 'edit' ),
+                        ),
+                        'free_gifts' => array(
+                            'description' => __('Extra products for section-specific discount offer', 'revenue'),
+                            'type'        => 'array',
+                            'context'     => array( 'view', 'edit' ),
+                            'items'       => $base_product_schema,
+                        ),
+                    ),
+                ),
+                array(
+                    'required' => array( 'offer_type', 'tiers' ),
+                    'properties' => array(
+                        'offer_type' => array(
+                            'description' => __('Offer mode', 'revenue'),
+                            'type'        => 'string',
+                            'enum'        => array( 'tiered_discount' ),
+                            'context'     => array( 'view', 'edit' ),
+                        ),
+                        'tiers' => array(
+                            'description' => __('List of tiers', 'revenue'),
+                            'type'        => 'array',
+                            'context'     => array( 'view', 'edit' ),
+                            'items'       => array(
+                                'type'       => 'object',
 								'properties' => array(
-									'discount_type' => array('type'=>'string','enum'=>array('percentage','fixed','fixed_price'),'context'=>array('view','edit')),
-									'discount_value' => array('type'=>'number','context'=>array('view','edit')),
-									'free_gifts' => $base_product_schema,
-								),
-							),
-						),
-					),
-				),
-			),
-		),
+                                    'discount_type' => array(
+										'type'=>'string',
+										'enum'=>$offer_type_enum,
+										'context'=>array('view','edit')
+									),
+                                    'discount_value' => array(
+										'type'=>'number',
+										'context'=>array('view','edit')
+									),
+                                    'free_gifts' => $base_product_schema,
+                                ),
+                                'oneOf'      => array(
+                                    array(
+                                        'properties' => array(
+                                            'tier_type' => array( 'enum' => array( 'fixed_quantity' ), 'context' => $context ),
+                                            'quantity'  => array( 'type' => 'integer', 'minimum' => 1, 'context' => $context ),
+                                        ),
+                                        'required' => array( 'tier_type', 'quantity' ),
+                                    ),
+                                    array(
+                                        'properties' => array(
+                                            'tier_type' => array( 'enum' => array( 'range_quantity' ), 'context' => $context ),
+                                            'min_quantity'  => array( 'type' => 'integer', 'minimum' => 1, 'context' => $context ),
+                                            'max_quantity'  => array( 'type' => 'integer', 'minimum' => 1, 'context' => $context ),
+                                        ),
+                                        'required' => array( 'tier_type', 'min_quantity', 'max_quantity' ),
+                                    ),
+                                    array(
+                                        'properties' => array(
+                                            'tier_type' => array( 'enum' => array( 'order_value' ), 'context' => $context ),
+                                            'order_value'  => array( 'type' => 'number', 'minimum' => 0, 'context' => $context ),
+                                        ),
+                                        'required' => array( 'tier_type', 'order_value' ),
+                                    ),
+                                ),
+                                
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
 
-		// Core part - end
+        // Core part - end
 
-		// additional and advanced settings.
+        // additional and advanced settings.
         'text_settings' => array(
             'description' => __('Text settings for bundle display', 'revenue'),
             'type'        => 'object',
@@ -510,17 +541,17 @@ $schema = array(
                 ),
             ),
         ),
-		'disable_coupon_field' => array(
-			'description' => __('Whether to disable coupon field when this bundle is applied', 'revenue' ),
-			'type'=> 'boolean',
-			'default'     => false,
-			'context'     => $context,
-		),
-		'limit_free_gift_per_order' => array(
-			'description' => __('Whether to limit free gift to one per order', 'revenue' ),
-			'type'        => 'boolean',
-			'default'     => false,
-			'context'     => $context,
-		),
-	),
+        'disable_coupon_field' => array(
+            'description' => __('Whether to disable coupon field when this bundle is applied', 'revenue'),
+            'type'=> 'boolean',
+            'default'     => false,
+            'context'     => $context,
+        ),
+        'limit_free_gift_per_order' => array(
+            'description' => __('Whether to limit free gift to one per order', 'revenue'),
+            'type'        => 'boolean',
+            'default'     => false,
+            'context'     => $context,
+        ),
+    ),
 );
