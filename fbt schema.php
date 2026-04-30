@@ -136,9 +136,6 @@ $schema = array(
             'description' => __('campaign trigger type', 'revenue'),
             'type'        => 'string',
             'enum'        => array(
-                'x_products',
-                'x_products_plus_specific_products',
-                'x_products_plus_specific_category',
                 'specific_products',
                 'specific_category',
                 'all_products',
@@ -146,7 +143,8 @@ $schema = array(
             'context'     => $context,
         ),
 
-        'trigger_product_ids' => array(
+        // can be category id or product id based on the trigger type.
+        'trigger_ids' => array(
             'description' => __('List of product IDs that trigger the campaign', 'revenue'),
             'type'        => 'array',
             'context'     => $context,
@@ -156,7 +154,7 @@ $schema = array(
         ),
 
 		// will have values when categories or all product is selected from the trigger type.
-        'excluded_trigger_product_ids'      => array(
+        'excluded_product_ids'      => array(
             'description' => __('List of product IDs to exclude from triggers', 'revenue'),
             'type'        => 'array',
             'context'     => $context,
