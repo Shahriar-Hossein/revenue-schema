@@ -145,31 +145,11 @@ $schema = array(
         ),
 
 		// core settings - start
-
-		'spending_threshold' => array(
-            'description' => __( 'Required spending amount to trigger the campaign', 'revenue' ),
-            'type'        => 'number',
-            'context'     => array( 'view', 'edit' ),
-        ),
         'spending_basis' => array(
             'description' => __( 'Type of required spending amount', 'revenue' ),
             'type'        => 'string',
             // cart total including tax and shipping, or just the product subtotal ( total of product price excluding other charges ex: tax, shipping ).
             'enum'        => array( 'cart_total', 'subtotal' ),
-            'context'     => array( 'view', 'edit' ),
-        ),
-
-        'display_goal_icon' => array(
-            'description' => __( 'Enable progress bar display', 'revenue' ),
-            'type'        => 'boolean',
-            'default'     => false,
-            'context'     => array( 'view', 'edit' ),
-        ),
-
-        'show_confetti' => array(
-            'description' => __( 'Enable confetti animation on success', 'revenue' ),
-            'type'        => 'boolean',
-            'default'     => false,
             'context'     => array( 'view', 'edit' ),
         ),
 
@@ -236,33 +216,18 @@ $schema = array(
                             'description' => __( 'List of free products for this tier', 'revenue' ),
                             'type'        => 'array',
                             'context'     => array( 'view', 'edit' ),
-                            'items'       => array(
-                                'type'       => 'object',
-                                'properties' => array(
-                                    'id' => array(
-                                        'description' => __( 'Product ID (used to fetch product from DB)', 'revenue' ),
-                                        'type'        => 'integer',
-                                        'context'     => array( 'view', 'edit' ),
-                                    ),
-                                    'title' => array(
-                                        'description' => __( 'Product title (editable label)', 'revenue' ),
-                                        'type'        => 'string',
-                                        'context'     => array( 'view', 'edit' ),
-                                    ),
-                                    'quantity' => array(
-                                        'description' => __( 'Quantity for this free product', 'revenue' ),
-                                        'type'        => 'integer',
-                                        'context'     => array( 'view', 'edit' ),
-                                        'default'     => 1,
-                                        'minimum'     => 1,
-                                    ),
-                                ),
-                            ),
+                            'items'       => $base_product_schema,
                         ),
-                        'is_allow_multiple_free_products' => array(
-                            'description' => __( 'Whether to allow multiple free products when the tier is triggered multiple times', 'revenue' ),
-                            'type'        => 'boolean',
-                            'default'     => false,
+                        'quantity_type' => array(
+                            'description' => __( 'Type of quantity for this tier reward', 'revenue' ),
+                            'type'        => 'string',
+                            'enum'        => array( 'all', 'multiple' ),
+                            'default'     => 'all',
+                            'context'     => array( 'view', 'edit' ),
+                        ),
+                        'quantity_limit' => array(
+                            'description' => __( 'Maximum quantity of free products to apply for this tier', 'revenue' ),
+                            'type'        => 'integer',
                             'context'     => array( 'view', 'edit' ),
                         ),
                         'on_hover' => array(
@@ -295,6 +260,37 @@ $schema = array(
 			'items'       => $product_discount_schema,
 		),
 
+        'cta_button' => array(
+            'description' => __( 'Call to action button settings', 'revenue' ),
+            'type'        => 'object',
+            'context'     => array( 'view', 'edit' ),
+            'properties'  => array(
+                'is_enabled' => array(
+                    'description' => __( 'Enable CTA button display', 'revenue' ),
+                    'type'        => 'boolean',
+                    'default'     => false,
+                    'context'     => array( 'view', 'edit' ),
+                ),
+                'text' => array(
+                    'description' => __( 'CTA button text', 'revenue' ),
+                    'type'        => 'string',
+                    'context'     => array( 'view', 'edit' ),
+                ),
+                'url' => array(
+                    'description' => __( 'CTA button URL', 'revenue' ),
+                    'type'        => 'string',
+                    'context'     => array( 'view', 'edit' ),
+                ),
+                // feature suggestion(shihab): open in new tab or not when click on cta button.
+                // 'should_open_in_new_tab' => array(
+                //     'description' => __( 'Whether to open the URL in a new tab', 'revenue' ),
+                //     'type'        => 'boolean',
+                //     'default'     => false,
+                //     'context'     => array( 'view', 'edit' ),
+                // ),
+            ),
+        ),
+
         'ultimate_goal_message' => array(
             'description' => __( 'Message to display when the ultimate goal is reached', 'revenue' ),
             'type'        => 'string',
@@ -322,6 +318,8 @@ $schema = array(
 				),
 			),
 		),
+
+        // most common settings for all.
 
 		// Schedule settings
         'schedule_end_time_enabled' => array(
