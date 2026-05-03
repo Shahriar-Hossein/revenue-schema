@@ -46,6 +46,7 @@ $schema = array(
             'type'        => 'string',
             'enum'        => array(
                 'thank_you',
+                'my_account',
                 'custom',
             ),
             'context'     => $context,
@@ -192,35 +193,6 @@ $schema = array(
             ),
         ),
 
-        'countdown_settings' => array(
-            'description' => __('Countdown timer settings', 'revenue'),
-            'type'        => 'object',
-            'context'     => $context,
-            'properties'  => array(
-                'is_enabled' => array(
-                    'description' => __('Whether countdown is enabled', 'revenue'),
-                    'type'        => 'boolean',
-                    'default'     => false,
-                    'context'     => $context,
-                ),
-                'duration_minutes' => array(
-                    'description' => __('Countdown duration in minutes', 'revenue'),
-                    'type'        => 'integer',
-                    'context'     => $context,
-                ),
-                'is_evergreen' => array(
-                    'description' => __('Whether the timer is evergreen (per-user)', 'revenue'),
-                    'type'        => 'boolean',
-                    'default'     => false,
-                    'context'     => $context,
-                ),
-                'message' => array(
-                    'description' => __('Message displayed with the countdown timer', 'revenue'),
-                    'type'        => 'string',
-                    'context'     => $context,
-                ),
-            ),
-        ),
         'placement_settings' => array(
             'description' => __('Placement Settings', 'revenue'),
             'type'        => 'object',
@@ -263,31 +235,6 @@ $schema = array(
             'context'     => $context,
         ),
 
-        // Cart / product interaction settings
-        'skip_add_to_cart' => array(
-            'description' => __('Skip Add to cart button for offered products', 'revenue'),
-            'type'        => 'boolean',
-            'default'     => false,
-            'context'     => $context,
-        ),
-        'allow_quantity' => array(
-            'description' => __('Enabled Quantity selector for offered products', 'revenue'),
-            'type'        => 'boolean',
-            'default'     => false,
-            'context'     => $context,
-        ),
-        'in_cart_behavior' => array(
-            'description' => __('If the offered products are already in cart action', 'revenue'),
-            'type'        => 'string',
-            'enum'        => array( 'do_nothing', 'hide' ),
-            'context'     => $context,
-        ),
-        'product_click_action' => array(
-            'description' => __('Action if click on product title or image', 'revenue'),
-            'type'        => 'string',
-            'enum'        => array( 'go_to_product_page', 'do_nothing' ),
-            'context'     => $context,
-        ),
         'css_id' => array(
             'description' => __('Additional CSS id', 'revenue'),
             'type'        => 'string',
@@ -295,19 +242,6 @@ $schema = array(
         ),
         'css_class' => array(
             'description' => __('Additional CSS class', 'revenue'),
-            'type'        => 'string',
-            'context'     => $context,
-        ),
-
-        // Animated Add to Cart settings
-        'add_to_cart_animation' => array(
-            'description' => __('Campaign animated add to cart animation type', 'revenue'),
-            'type'        => 'string',
-            'context'     => $context,
-            'enum'        => array_keys($animation_types),
-        ),
-        'animation_loop_delay' => array(
-            'description' => __('Delay between animation loops', 'revenue'),
             'type'        => 'string',
             'context'     => $context,
         ),
@@ -337,17 +271,5 @@ $schema = array(
                 ),
             ),
         ),
-		'disable_coupon_field' => array(
-			'description' => __('Whether to disable coupon field when this bundle is applied', 'revenue' ),
-			'type'=> 'boolean',
-			'default'     => false,
-			'context'     => $context,
-		),
-		'limit_free_gift_per_order' => array(
-			'description' => __('Whether to limit free gift to one per order', 'revenue' ),
-			'type'        => 'boolean',
-			'default'     => false,
-			'context'     => $context,
-		),
 	),
 );
