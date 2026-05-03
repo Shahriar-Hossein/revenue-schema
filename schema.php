@@ -1,4 +1,13 @@
 <?php
+
+
+$animation_types = array(
+	'wobble' => __( 'Wobble', 'revenue' ),
+	'shake'  => __( 'Shake', 'revenue' ),
+	'zoom'   => __( 'Zoom', 'revenue' ),
+	'pulse'  => __( 'Pulse', 'revenue' ),
+);
+
 $schema = array(
 	'$schema'    => 'http://json-schema.org/draft-04/schema#',
 	'title'      => $this->post_type,
@@ -536,7 +545,7 @@ $schema = array(
 			'description' => __( 'Campaign animated add to cart animation type', 'revenue' ),
 			'type'        => 'string',
 			'context'     => array( 'view', 'edit' ),
-			'enum'        => array_keys( revenue()->get_campaign_animated_add_to_cart_animation_types() ),
+			'enum'        => array_keys( $animation_types ),
 		),
 		'add_to_cart_animation_start_delay'               => array(
 			'description' => __( 'Campaign animated add to cart animation start delay', 'revenue' ),
