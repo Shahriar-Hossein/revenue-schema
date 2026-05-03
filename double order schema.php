@@ -162,17 +162,6 @@ $double_order_schema = array(
                     'type'        => 'integer',
                     'context'     => $context,
                 ),
-                'is_evergreen' => array(
-                    'description' => __('Whether the timer is evergreen (per-user)', 'revenue'),
-                    'type'        => 'boolean',
-                    'default'     => false,
-                    'context'     => $context,
-                ),
-                'message' => array(
-                    'description' => __('Message displayed with the countdown timer', 'revenue'),
-                    'type'        => 'string',
-                    'context'     => $context,
-                ),
             ),
         ),
         'placement_settings' => array(
@@ -189,6 +178,19 @@ $double_order_schema = array(
                     )
                 ),
             ),
+        ),
+
+        // Animated Discount Row settings
+        'discount_row_animation' => array(
+            'description' => __('Campaign animated discount row animation type', 'revenue'),
+            'type'        => 'string',
+            'context'     => $context,
+            'enum'        => array_keys($animation_types),
+        ),
+        'animation_loop_delay' => array(
+            'description' => __('Delay between animation loops', 'revenue'),
+            'type'        => 'string',
+            'context'     => $context,
         ),
 
         // Schedule settings
@@ -251,19 +253,6 @@ $double_order_schema = array(
         ),
         'css_class' => array(
             'description' => __('Additional CSS class', 'revenue'),
-            'type'        => 'string',
-            'context'     => $context,
-        ),
-
-        // Animated Add to Cart settings
-        'add_to_cart_animation' => array(
-            'description' => __('Campaign animated add to cart animation type', 'revenue'),
-            'type'        => 'string',
-            'context'     => $context,
-            'enum'        => array_keys($animation_types),
-        ),
-        'animation_loop_delay' => array(
-            'description' => __('Delay between animation loops', 'revenue'),
             'type'        => 'string',
             'context'     => $context,
         ),
